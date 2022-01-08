@@ -26,7 +26,7 @@ export class News extends Component {
         super(props);
         this.state = {
             articles: [],
-            loading: false,
+            loading: true,
             page: 1,
             totalResults: 0,
         }
@@ -34,6 +34,7 @@ export class News extends Component {
     }
 
     async updateNews() {
+        this.props.setProgress(0);
         const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=f58533b9a253493abb23f13705e9ade5&page=${this.state.page}&pageSize=${this.props.pageSize}`;
         this.setState({ loading: true });
         let data = await fetch(url);
@@ -44,6 +45,7 @@ export class News extends Component {
             totalResults: parsedData.totalResults,
             loading: false,
         })
+        this.props.setProgress(100);
     }
 
     async componentDidMount() {
@@ -77,14 +79,12 @@ export class News extends Component {
     fetchMoreData = async () => {
         this.setState({ page: this.state.page + 1 })
         const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=f58533b9a253493abb23f13705e9ade5&page=${this.state.page}&pageSize=${this.props.pageSize}`;
-        this.setState({ loading: true });
         let data = await fetch(url);
         let parsedData = await data.json()
         console.log(parsedData);
         this.setState({
             articles: this.state.articles.concat(parsedData.articles),
             totalResults: parsedData.totalResults,
-            loading: false,
         })
     };
 
@@ -93,6 +93,7 @@ export class News extends Component {
         return (
             <div className="container my-3">
                 <h1 className="text-center" style={{ margin: '35px 0px' }}>NewsMonkey - Top {this.capitalizeFirstLetter(this.props.category)} Headlines</h1>
+                {this.state.loading && <Spinner/>}
                 <InfiniteScroll
                     dataLength={this.state.articles.length}
                     next={this.fetchMoreData}
