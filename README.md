@@ -14,3 +14,5 @@ NewsMonkey is a platform made from MERN Stack where the users can view daily new
     + ` npm start`
 3. Open the localhost link.
 
+4. HAPPY CODING !!!!
+
